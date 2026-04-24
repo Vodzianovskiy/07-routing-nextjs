@@ -19,21 +19,24 @@ export default function NotePreview({ id }: Props) {
   } = useQuery({
     queryKey: ["note", id],
     queryFn: () => fetchNoteById(id),
-    refetchOnMount: false, // ← ось що не вистачало!
+    refetchOnMount: false,
   });
 
-  if (isLoading)
+  if (isLoading) {
     return (
       <Modal onClose={() => router.back()}>
         <p>Loading...</p>
       </Modal>
     );
-  if (isError || !note)
+  }
+
+  if (isError || !note) {
     return (
       <Modal onClose={() => router.back()}>
         <p>Error loading note</p>
       </Modal>
     );
+  }
 
   return (
     <Modal onClose={() => router.back()}>

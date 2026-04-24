@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useDebounce } from "use-debounce";
 import { fetchNotes } from "@/lib/api";
 import NoteList from "@/components/NoteList/NoteList";
 import SearchBox from "@/components/SearchBox/SearchBox";
@@ -18,15 +19,21 @@ export default function NotesClient({ tag }: Props) {
   const [search, setSearch] = useState<string>("");
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
+  const [debouncedSearch] = useDebounce(search, 500);
+
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["notes", tag, search, page],
-    queryFn: () => fetchNotes({ tag, search, page }),
+    queryKey: ["notes", tag, debouncedSearch, page],
+    queryFn: () => fetchNotes({ tag, search: debouncedSearch, page }),
     refetchOnMount: false,
   });
 
   const handleSearchChange = (value: string): void => {
     setSearch(value);
     setPage(1);
+  };
+
+  const handlePageChange = (newPage: number): void => {
+    setPage(newPage);
   };
 
   if (isLoading) return <p>Loading...</p>;
@@ -40,7 +47,7 @@ export default function NotesClient({ tag }: Props) {
       <Pagination
         currentPage={page}
         totalPages={data?.totalPages ?? 1}
-        onPageChange={setPage}
+        onPageChange={handlePageChange}
       />
       {isModalOpen && (
         <Modal onClose={() => setIsModalOpen(false)}>
