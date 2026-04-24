@@ -1,6 +1,6 @@
 interface Props {
   children: React.ReactNode;
-  modal: React.ReactNode;
+  modal?: React.ReactNode; // ← додай ?
 }
 
 export default function RootLayout({ children, modal }: Props) {

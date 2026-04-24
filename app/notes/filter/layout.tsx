@@ -1,5 +1,4 @@
 // app/notes/filter/layout.tsx
-import { redirect } from "next/navigation";
 import css from "./LayoutNotes.module.css";
 
 interface Props {
