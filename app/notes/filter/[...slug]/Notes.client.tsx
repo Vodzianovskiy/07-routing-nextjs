@@ -1,12 +1,21 @@
 "use client";
 
+import { useQuery } from "@tanstack/react-query";
+import { fetchNotes } from "@/lib/api";
 import NoteList from "@/components/NoteList/NoteList";
-import type { Note } from "@/types/note";
 
 interface Props {
-  notes: Note[];
+  tag?: string;
 }
 
-export default function NotesClient({ notes }: Props) {
-  return <NoteList notes={notes} />;
+export default function NotesClient({ tag }: Props) {
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["notes", tag],
+    queryFn: () => fetchNotes({ tag }),
+  });
+
+  if (isLoading) return <p>Loading...</p>;
+  if (isError) return <p>Something went wrong</p>;
+
+  return <NoteList notes={data?.notes ?? []} />;
 }
